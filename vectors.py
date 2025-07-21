@@ -40,6 +40,13 @@ class Vector3:
     def __iter__(self) -> iter:
         return iter((self.x, self.y, self.z))
 
+@dataclass
+class Vector4:
+    x: float
+    y: float
+    z: float
+    w: float = 0
+
 def vec2_to_tuple_int(vector: Vector2) -> tuple[int, int]:
     return (round(vector.x), round(vector.y))
 

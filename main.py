@@ -24,25 +24,28 @@ def main() -> None:
         display=display,
         objects=[generate_cube(colour=Colour(255, 255, 255), radius=0.05)],
         cameras=[Camera(
-            position=Vector3(0, 0, 0),
+            position=Vector3(0.5, 0.5, -3),
             pitch=0,
-            yaw=0,)],
+            yaw=0,
+            roll=0)],
         selected_camera=0,
     )
     
     dt: float = 0
     while display.active:
         event_flags: dict[int: bool] = get_all_events()
+        keys = pg.key.get_pressed()
 
         if get_event(event=pg.QUIT, event_flags=event_flags) or get_event(event=pg.K_ESCAPE, event_flags=event_flags):
             display.active = False
 
         fill_display(surface=display.surface, colour=BACKGROUND_COL)
 
-        update_scene(scene)
+        update_scene(dt=dt, scene=scene, keys=keys)
+
         render_scene(scene)
 
-        dt: float = display.clock.tick(FPS)
+        dt: float = display.clock.tick(FPS) / 1_000
 
         pg.display.flip()
 

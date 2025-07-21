@@ -1,6 +1,6 @@
 
 from dataclasses import dataclass
-from camera import Camera, calc_camera_matrix
+from camera import Camera, calc_camera_matrix, camera_movement
 from points import PointCloud
 from window import Display
 from renderer import render_point_cloud
@@ -14,7 +14,8 @@ class Scene:
     cameras: list[Camera]
     selected_camera: int = 0
 
-def update_scene(scene: Scene) -> None:
+def update_scene(scene: Scene, keys, dt: float) -> None:
+    camera_movement(dt=dt, camera=scene.cameras[scene.selected_camera], keys=keys)
     calc_camera_matrix(camera=scene.cameras[scene.selected_camera])
 
 def render_scene(scene: Scene) -> None:
@@ -22,7 +23,11 @@ def render_scene(scene: Scene) -> None:
     for scene_object in scene.objects:
         match scene_object:
             case PointCloud():
-                render_point_cloud(scene.display.surface, scene_object)
+                render_point_cloud(
+                    display_surface=scene.display.surface,
+                    camera=scene.cameras[scene.selected_camera],
+                    point_cloud=scene_object
+                )
             case _:
                 pass
 
