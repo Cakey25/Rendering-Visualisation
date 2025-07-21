@@ -30,6 +30,5 @@ class Colour:
     def __iter__(self):
         return iter((self.r, self.g, self.b, self.a))
     
-    @property
-    def tuple(self):
-        return (self.r, self.g, self.b, self.a)
+def colour_to_tuple(colour: Colour) -> tuple[int, int, int, int]:
+    return (colour.r, colour.g, colour.b, colour.a)

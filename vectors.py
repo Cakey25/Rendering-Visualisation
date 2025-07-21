@@ -25,3 +25,10 @@ class Vector3:
     @property 
     def integer(self) -> tuple[int, int, int]:
         return (self.x, self.y, self.z)
+    
+def vec2_to_tuple_int(vector: Vector2) -> tuple[int, int]:
+    return (vector.x, vector.y)
+
+def vec3_to_tuple_int(vector: Vector3) -> tuple[int, int, int]:
+    return (vector.x, vector.y, vector.z)
+    
