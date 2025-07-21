@@ -32,6 +32,16 @@ def camera_movement(dt: float, camera: Camera, keys) -> None:
     if keys[pg.K_e]:
         camera.position.y -= 1 * dt
 
+    
+    if keys[pg.K_UP]:
+        camera.pitch += 1 * dt
+    if keys[pg.K_DOWN]:
+        camera.pitch -= 1 * dt
+    if keys[pg.K_RIGHT]:
+        camera.yaw += 1 * dt
+    if keys[pg.K_LEFT]:
+        camera.yaw -= 1 * dt
+
 def calc_camera_matrix(camera: Camera) -> None:
     # Camera position
     camera.camera_matrix = Matrix4(elements=[

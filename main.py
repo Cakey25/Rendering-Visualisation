@@ -53,3 +53,10 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+'''
+# things to fix,
+the offset in the other file,
+camera movement with the mouse
+the functions in the matrix file - clearer inputs and outputs and better error handling
+way to draw lines between the dots
+'''
