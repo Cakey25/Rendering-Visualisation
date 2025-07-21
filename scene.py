@@ -1,6 +1,6 @@
 
 from dataclasses import dataclass
-from camera import Camera
+from camera import Camera, calc_camera_matrix
 from points import PointCloud
 from window import Display
 from renderer import render_point_cloud
@@ -15,7 +15,7 @@ class Scene:
     selected_camera: int = 0
 
 def update_scene(scene: Scene) -> None:
-    pass
+    calc_camera_matrix(camera=scene.cameras[scene.selected_camera])
 
 def render_scene(scene: Scene) -> None:
     

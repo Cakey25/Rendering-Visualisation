@@ -31,7 +31,6 @@ class Vector2:
         pass
 '''
     
-
 @dataclass
 class Vector3:
     x: float
