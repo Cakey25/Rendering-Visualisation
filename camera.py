@@ -2,11 +2,13 @@
 from dataclasses import dataclass
 
 from vectors import Vector3, Vector2
-from matrices import Matrix4, matrix4_mult, identity_matrix4
+from matrices import Matrix4, matrix4_mult
 from math import sin, cos
 import pygame as pg
 
 OFFSET = Vector2(480, 270)
+MOUSE_SENSITIVITY = 0.05
+CAMERA_SPEED = 4
 
 @dataclass
 class Camera:
@@ -18,29 +20,30 @@ class Camera:
     focal: float = 1000
     camera_matrix: Matrix4 = Matrix4
 
-def camera_movement(dt: float, camera: Camera, keys) -> None:
+def camera_movement(dt: float, camera: Camera, keys: list[bool], mouse_vel: Vector2) -> None:
+    # Moving forwards and backwards
     if keys[pg.K_w]:
-        camera.position.z += 1 * dt
+        camera.position.x += CAMERA_SPEED * sin(camera.yaw) * dt
+        camera.position.z += CAMERA_SPEED * cos(camera.yaw) * dt
     if keys[pg.K_s]:
-        camera.position.z -= 1 * dt
+        camera.position.x -= CAMERA_SPEED * sin(camera.yaw) * dt
+        camera.position.z -= CAMERA_SPEED * cos(camera.yaw) * dt
+    # Moving sideways
     if keys[pg.K_d]:
-        camera.position.x += 1 * dt
+        camera.position.x += CAMERA_SPEED * cos(camera.yaw) * dt
+        camera.position.z -= CAMERA_SPEED * sin(camera.yaw) * dt
     if keys[pg.K_a]:
-        camera.position.x -= 1 * dt
+        camera.position.x -= CAMERA_SPEED * cos(camera.yaw) * dt
+        camera.position.z += CAMERA_SPEED * sin(camera.yaw) * dt
+    # Moving up and down
     if keys[pg.K_q]:
-        camera.position.y += 1 * dt
+        camera.position.y += CAMERA_SPEED * dt
     if keys[pg.K_e]:
-        camera.position.y -= 1 * dt
+        camera.position.y -= CAMERA_SPEED * dt
 
-    
-    if keys[pg.K_UP]:
-        camera.pitch += 1 * dt
-    if keys[pg.K_DOWN]:
-        camera.pitch -= 1 * dt
-    if keys[pg.K_RIGHT]:
-        camera.yaw += 1 * dt
-    if keys[pg.K_LEFT]:
-        camera.yaw -= 1 * dt
+    # Controlling camera rotation with mouse
+    camera.yaw += mouse_vel.x * dt * MOUSE_SENSITIVITY
+    camera.pitch -= mouse_vel.y * dt * MOUSE_SENSITIVITY
 
 def calc_camera_matrix(camera: Camera) -> None:
     # Camera position
@@ -51,17 +54,17 @@ def calc_camera_matrix(camera: Camera) -> None:
         0, 0, 0,                  1]
     )
 
-    # Camera pitch / X
+    # Camera roll / Z
     camera.camera_matrix = matrix4_mult(
         Matrix4(elements=[
-            1,                 0,                  0, 0,
-            0, cos(camera.pitch), -sin(camera.pitch), 0,
-            0, sin(camera.pitch),  cos(camera.pitch), 0,
-            0,                 0,                  0, 1]
+            cos(camera.roll), -sin(camera.roll), 0, 0,
+            sin(camera.roll),  cos(camera.roll), 0, 0,
+            0,                                0, 1, 0,
+            0,                                0, 0, 1]
         ),
         camera.camera_matrix
     )
-            
+
     # Camera yaw / Y
     camera.camera_matrix = matrix4_mult(
         Matrix4(elements=[
@@ -73,13 +76,13 @@ def calc_camera_matrix(camera: Camera) -> None:
         camera.camera_matrix
     )
 
-    # Camera roll / Z
+    # Camera pitch / X
     camera.camera_matrix = matrix4_mult(
         Matrix4(elements=[
-            cos(camera.roll), -sin(camera.roll), 0, 0,
-            sin(camera.roll),  cos(camera.roll), 0, 0,
-            0,                                0, 1, 0,
-            0,                                0, 0, 1]
+            1,                 0,                  0, 0,
+            0, cos(camera.pitch), -sin(camera.pitch), 0,
+            0, sin(camera.pitch),  cos(camera.pitch), 0,
+            0,                 0,                  0, 1]
         ),
         camera.camera_matrix
     )

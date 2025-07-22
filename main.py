@@ -2,7 +2,7 @@
 from camera import Camera
 from window import Display, create_display, close_display, fill_display
 from events import get_all_events, get_event
-from vectors import Vector3, Vector2
+from vectors import Vector3, Vector2, vec2_to_tuple_int
 from colours import Colour
 from scene import Scene, render_scene, update_scene
 from points import generate_cube
@@ -30,18 +30,27 @@ def main() -> None:
             roll=0)],
         selected_camera=0,
     )
+
+    # Setup mouse
+    pg.event.set_grab(True)
+    pg.mouse.set_visible(False)
+    pg.mouse.set_pos(vec2_to_tuple_int(DISPLAY_SIZE))
     
     dt: float = 0
     while display.active:
+
+        # Make a inputs data class to contain these so i can pass it around
         event_flags: dict[int: bool] = get_all_events()
-        keys = pg.key.get_pressed()
+        keys: list[bool] = pg.key.get_pressed()
+
+        mouse_vel = Vector2(*pg.mouse.get_rel())
 
         if get_event(event=pg.QUIT, event_flags=event_flags) or get_event(event=pg.K_ESCAPE, event_flags=event_flags):
             display.active = False
 
         fill_display(surface=display.surface, colour=BACKGROUND_COL)
 
-        update_scene(dt=dt, scene=scene, keys=keys)
+        update_scene(dt=dt, scene=scene, keys=keys, mouse_vel=mouse_vel)
 
         render_scene(scene)
 
@@ -59,4 +68,5 @@ the offset in the other file,
 camera movement with the mouse
 the functions in the matrix file - clearer inputs and outputs and better error handling
 way to draw lines between the dots
+go through and do more type annotations
 '''
