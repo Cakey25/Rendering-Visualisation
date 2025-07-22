@@ -1,0 +1,11 @@
+
+from vectors import Vector2
+
+# Window
+DISPLAY_SIZE = Vector2(960, 540)
+FPS = 60
+
+# Camera
+DISPLAY_OFFSET = DISPLAY_SIZE / 2
+MOUSE_SENSITIVITY = 0.05
+CAMERA_SPEED = 4

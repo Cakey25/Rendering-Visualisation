@@ -6,12 +6,11 @@ from vectors import Vector3, Vector2, vec2_to_tuple_int
 from colours import Colour
 from scene import Scene, render_scene, update_scene, get_active_camera
 from points import generate_cube
+from config import DISPLAY_SIZE, FPS
 
 from dataclasses import dataclass
 import pygame as pg
 
-DISPLAY_SIZE = Vector2(960, 540)
-FPS = 60
 
 
 BACKGROUND_COL = Colour(r=200, g=100, b=10)

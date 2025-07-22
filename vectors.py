@@ -8,7 +8,8 @@ class Vector2:
     
     def __iter__(self) -> iter:
         return iter((self.x, self.y))
-
+    
+    # Addition with other vectors
     def __add__(self, other):
         if isinstance(other, Vector2):
             return Vector2(self.x + other.x, self.y + other.y)
@@ -16,8 +17,9 @@ class Vector2:
             raise TypeError(f'Invalid parameter for add [{type(other)}]')
 
     def __radd__(self, other):
-        self.__add__(other, self)
+        return self.__add__(other, self)
 
+    # Subtraction with other vectors
     def __sub__(self, other):
         if isinstance(other, Vector2):
             return Vector2(self.x - other.x, self.y - other.y)
@@ -25,12 +27,28 @@ class Vector2:
             raise TypeError(f'Invalid parameter for sub [{type(other)}]')
         
     def __rsub__(self, other):
-        self.__sub__(other, self)
-'''
+        return self.__sub__(other, self)
+
+    # Multiplication with floats or ints
     def __mul__(self, other):
-        pass
-'''
+        if isinstance(other, float | int):
+            return Vector2(self.x * other, self.y * other)
+        else:
+            raise TypeError(f'Invalid parameter for mul [{type(other)}]')
+        
+    def __rmul__(self, other):
+        return self.__sub__(other, self)
     
+    # Division with floats or ints
+    def __truediv__(self, other):
+        if isinstance(other, float | int):
+            return Vector2(self.x / other, self.y / other)
+        else:
+            raise TypeError(f'Invalid parameter for div [{type(other)}]')
+        
+    def __rtruediv__(self, other):
+        return self.__sub__(other, self)
+
 @dataclass
 class Vector3:
     x: float

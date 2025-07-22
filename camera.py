@@ -5,10 +5,7 @@ from vectors import Vector3, Vector2
 from matrices import Matrix4, matrix4_mult
 from math import sin, cos
 import pygame as pg
-
-OFFSET = Vector2(480, 270)
-MOUSE_SENSITIVITY = 0.05
-CAMERA_SPEED = 4
+from config import DISPLAY_OFFSET, MOUSE_SENSITIVITY, CAMERA_SPEED
 
 @dataclass
 class Camera:
@@ -102,10 +99,10 @@ def calc_camera_matrix(camera: Camera) -> None:
     # Display Offset
     camera.camera_matrix = matrix4_mult(
         Matrix4(elements=[
-            1,  0, 0, OFFSET.x,
-            0, -1, 0, OFFSET.y,
-            0,  0, 1,        0,
-            0,  0, 0,        1]
+            1,  0, 0, DISPLAY_OFFSET.x,
+            0, -1, 0, DISPLAY_OFFSET.y,
+            0,  0, 1,                0,
+            0,  0, 0,                1]
         ),
         camera.camera_matrix
     )
