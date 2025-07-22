@@ -17,7 +17,8 @@ class Camera:
     yaw: float
     roll: float
 
-    focal: float = 1000
+    focal: float = 540 # this is number of pixels a cube of length, x thakes up when x away
+    # when it is the same as horizontal or vertical heigth the FOV is 60 degrees in that direction
     camera_matrix: Matrix4 = Matrix4
 
 def camera_movement(dt: float, camera: Camera, keys: list[bool], mouse_vel: Vector2) -> None:

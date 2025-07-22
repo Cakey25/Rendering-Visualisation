@@ -4,7 +4,7 @@ from window import Display, create_display, close_display, fill_display
 from events import get_all_events, get_event
 from vectors import Vector3, Vector2, vec2_to_tuple_int
 from colours import Colour
-from scene import Scene, render_scene, update_scene
+from scene import Scene, render_scene, update_scene, get_active_camera
 from points import generate_cube
 
 from dataclasses import dataclass
@@ -24,7 +24,7 @@ def main() -> None:
         display=display,
         objects=[generate_cube(colour=Colour(255, 255, 255), radius=0.05)],
         cameras=[Camera(
-            position=Vector3(0.5, 0.5, -3),
+            position=Vector3(0.5, 0.5, -1),
             pitch=0,
             yaw=0,
             roll=0)],

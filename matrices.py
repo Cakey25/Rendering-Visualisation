@@ -37,18 +37,10 @@ def matrix4_mult(mat1: Matrix4, mat2: Matrix4):
     ])
 
 # Fix this function as it is not very clear as what it is up to
-def matrix4_dot_vector4(matrix: Matrix4, vector: Vector3) -> Vector2 | bool:
-    vec4 = Vector4(vector.x, vector.y, vector.z, 1)
-    result = Vector4(0, 0, 0, 0)
-    result.x = matrix[0]  * vec4.x + matrix[1]  * vec4.y + matrix[2]  * vec4.z + matrix[3]  * vec4.w
-    result.y = matrix[4]  * vec4.x + matrix[5]  * vec4.y + matrix[6]  * vec4.z + matrix[7]  * vec4.w
-    result.z = matrix[8]  * vec4.x + matrix[9]  * vec4.y + matrix[10] * vec4.z + matrix[11] * vec4.w
-    result.w = matrix[12] * vec4.x + matrix[13] * vec4.y + matrix[14] * vec4.z + matrix[15] * vec4.w
-
-    if result.w > 0.01: 
-        result.x = result.x / result.w
-        result.y = result.y / result.w
-        return Vector2(result.x, result.y)
-    else:
-        return False
-
+def matrix4_dot_vector4(matrix: Matrix4, vector: Vector4) -> Vector4:
+    return Vector4(
+        matrix[0]  * vector.x + matrix[1]  * vector.y + matrix[2]  * vector.z + matrix[3]  * vector.w,
+        matrix[4]  * vector.x + matrix[5]  * vector.y + matrix[6]  * vector.z + matrix[7]  * vector.w,
+        matrix[8]  * vector.x + matrix[9]  * vector.y + matrix[10] * vector.z + matrix[11] * vector.w,
+        matrix[12] * vector.x + matrix[13] * vector.y + matrix[14] * vector.z + matrix[15] * vector.w
+    )

@@ -58,3 +58,10 @@ def vec2_to_tuple_float(vector: Vector2) -> tuple[float, float]:
 
 def vec3_to_tuple_float(vector: Vector3) -> tuple[float, float, float]:
     return (vector.x, vector.y, vector.z)
+
+
+def vec4_to_vec3(vector: Vector4) -> Vector3:
+    return Vector3(vector.x, vector.y, vector.z)
+
+def vec4_to_vec2(vector: Vector4) -> Vector2:
+    return Vector2(vector.x, vector.y)
