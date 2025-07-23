@@ -7,16 +7,37 @@ from colours import Colour
 from scene import Scene, render_scene, update_scene, get_active_camera
 from points import generate_cube
 from config import DISPLAY_SIZE, FPS
+from shader_program import get_program
+from mesh import Mesh, rebuild_vertex_buffer, render_mesh
 
 from dataclasses import dataclass
 import pygame as pg
+import moderngl as mgl
 
 
 
 BACKGROUND_COL = Colour(r=200, g=100, b=10)
 
 def main() -> None:
-    display: Display = create_display(DISPLAY_SIZE)
+    display: Display = create_display(DISPLAY_SIZE, pg.OPENGL | pg.DOUBLEBUF)
+
+    # put this somewhere else
+    ctx = mgl.create_context()
+    ctx.gc_mode = 'auto'
+
+    shader_program = get_program(ctx=ctx, name='quad')
+    quad = Mesh(
+        program=shader_program,
+        layout=('2f', 'vert'),
+        vertices=[
+            -0.5, -0.5,
+            0.5, -0.5,
+            -0.5, 0.5,
+            -0.5, 0.5,
+            0.5, -0.5,
+            0.5, 0.5]
+    )
+    rebuild_vertex_buffer(ctx=ctx, mesh=quad)
         
     # Creating scene - which will be done from json at some point
     scene = Scene(
@@ -37,6 +58,7 @@ def main() -> None:
     
     dt: float = 0
     while display.active:
+        ctx.clear()
 
         # Make a inputs data class to contain these so i can pass it around
         event_flags: dict[int: bool] = get_all_events()
@@ -55,6 +77,8 @@ def main() -> None:
 
         dt: float = display.clock.tick(FPS) / 1_000
 
+        render_mesh(ctx=ctx, mesh=quad, mode=mgl.TRIANGLES)
+
         pg.display.flip()
 
     close_display()
@@ -62,10 +86,11 @@ def main() -> None:
 if __name__ == '__main__':
     main()
 '''
-# things to fix,
-the offset in the other file,
-camera movement with the mouse
-the functions in the matrix file - clearer inputs and outputs and better error handling
-way to draw lines between the dots
-go through and do more type annotations
+create a 3d object class or something along those lines
+the object will have a vbo and vao and later will have an option to do groups of objects in
+a single vao and vbo,
+the vertices will be sent into a shader which will be updated and stuff by a seperate thing
+and the shader will have access to the normal, z value and coordinates and colour of each vertex
+and will render the thing using the passed in camera matrix
+will then render onto the screen
 '''

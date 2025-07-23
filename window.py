@@ -13,11 +13,11 @@ class Display:
     clock: pg.Clock
     active: bool
 
-def create_display(display_size: Vector2) -> Display:
+def create_display(display_size: Vector2, flags: int) -> Display:
 
     return Display(
         size=display_size,
-        surface=pg.display.set_mode(vec2_to_tuple_int(display_size)),
+        surface=pg.display.set_mode(vec2_to_tuple_int(display_size), flags),
         clock=pg.Clock(),
         active=True,
     )
