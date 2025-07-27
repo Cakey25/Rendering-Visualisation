@@ -8,7 +8,7 @@ from scene import Scene, render_scene, update_scene, get_active_camera
 from points import generate_cube
 from config import DISPLAY_SIZE, FPS
 from shader_program import get_program
-from mesh import Mesh, rebuild_vertex_buffer, render_mesh
+from mesh import Mesh, rebuild_vertex_buffer, render_mesh, build_empty_buffer, update_vertex_buffer, append_vertex_buffer
 
 from dataclasses import dataclass
 import pygame as pg
@@ -30,17 +30,25 @@ def main() -> None:
         program=shader_program,
         layout=('2f', 'vert')
     )
-    rebuild_vertex_buffer(
-        ctx=ctx,
+
+    # Create a empty buffer
+    build_empty_buffer(ctx=ctx, mesh=quad, size=12)
+    # Set buffer to 1 triangle
+    update_vertex_buffer(
         mesh=quad, 
         vertices=[
             -0.5, -0.5,
             0.5, -0.5,
             -0.5, 0.5,
+    ])
+    # Append another triangle to buffer
+    append_vertex_buffer(
+        mesh=quad,
+        vertices=[
             -0.5, 0.5,
             0.5, -0.5,
-            0.5, 0.5]
-    )
+            0.5, 0.5
+    ])
         
     # Creating scene - which will be done from json at some point
     scene = Scene(
