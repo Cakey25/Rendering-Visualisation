@@ -28,7 +28,11 @@ def main() -> None:
     shader_program = get_program(ctx=ctx, name='quad')
     quad = Mesh(
         program=shader_program,
-        layout=('2f', 'vert'),
+        layout=('2f', 'vert')
+    )
+    rebuild_vertex_buffer(
+        ctx=ctx,
+        mesh=quad, 
         vertices=[
             -0.5, -0.5,
             0.5, -0.5,
@@ -37,7 +41,6 @@ def main() -> None:
             0.5, -0.5,
             0.5, 0.5]
     )
-    rebuild_vertex_buffer(ctx=ctx, mesh=quad)
         
     # Creating scene - which will be done from json at some point
     scene = Scene(
@@ -77,7 +80,7 @@ def main() -> None:
 
         dt: float = display.clock.tick(FPS) / 1_000
 
-        render_mesh(ctx=ctx, mesh=quad, mode=mgl.TRIANGLES)
+        render_mesh(mesh=quad, mode=mgl.TRIANGLES)
 
         pg.display.flip()
 
@@ -93,4 +96,12 @@ the vertices will be sent into a shader which will be updated and stuff by a sep
 and the shader will have access to the normal, z value and coordinates and colour of each vertex
 and will render the thing using the passed in camera matrix
 will then render onto the screen
+
+
+fto create a circle willl need a function that adds to a buffer for more vertices
+depending on a center and a radius for a quad and will then render that thing using a circle shader
+that will take 0.5 away from the uv and then do distance squared on it to see how big it is, could
+then set the size depending on the z when applying the matrix to it.
+
+
 '''
