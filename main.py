@@ -52,7 +52,7 @@ def main() -> None:
         if get_event(event=pg.QUIT, event_flags=event_flags) or get_event(event=pg.K_ESCAPE, event_flags=event_flags):
             display.active = False
 
-        update_scene(dt=dt, scene=scene, keys=keys, mouse_vel=mouse_vel)
+        update_scene(scene=scene, ctx=ctx, keys=keys, dt=dt, mouse_vel=mouse_vel)
         render_scene(scene=scene, surface=display.surface, ctx=ctx)
 
         dt: float = display.clock.tick(FPS) / 1_000

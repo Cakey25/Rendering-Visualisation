@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from camera import Camera, calc_camera_matrix, camera_movement
 from points import PointCloud
 from window import Display, fill_display
-from renderer import render_point_cloud
+from renderer import render_point_cloud, update_mesh_buffer
 from vectors import Vector2
 from shader_program import get_program
 from mesh import Mesh, build_empty_buffer, update_vertex_buffer, append_vertex_buffer, render_mesh
@@ -12,6 +12,7 @@ from colours import Colour
 
 import pygame as pg
 import moderngl as mgl
+import numpy as np
 
 @dataclass
 class Scene:
@@ -25,51 +26,42 @@ class Scene:
         self.objects = dict()
 
 def generate_scene(scene: Scene, ctx: mgl.Context) -> None:
-    scene.objects['quad_program'] = get_program(ctx=ctx, name='quad')
-    scene.objects['quad'] = Mesh(
-        program=scene.objects['quad_program'],
-        layout=('2f', 'vert')
-    )
-    # Create a empty buffer
-    build_empty_buffer(ctx=ctx, mesh=scene.objects['quad'], size=12)
-    # Set buffer to 1 triangle
-    update_vertex_buffer(
-        mesh=scene.objects['quad'], 
+    scene.objects['circle_program'] = get_program(ctx=ctx, name='quad')
+    scene.objects['vertices'] = Mesh(
+        program=scene.objects['circle_program'],
+        layout=('2f', 'vert'),
         vertices=[
-            -0.5, -0.5,
-            0.5, -0.5,
-            -0.5, 0.5,
+            0, 0, 0,
+            1, 0, 0,
+            0, 1, 0,
+            1, 1, 0,
+            0, 0, 1,
+            1, 0, 1,
+            0, 1, 1,
+            1, 1, 1
     ])
-    # Append another triangle to buffer
-    append_vertex_buffer(
-        mesh=scene.objects['quad'],
-        vertices=[
-            -0.5, 0.5,
-            0.5, -0.5,
-            0.5, 0.5
-    ])
-    scene.objects['cube_vertices'] = generate_cube(
-        colour=Colour(255, 255, 255),
-        radius=0.2
-    )
 
 def get_active_camera(scene: Scene) -> Camera:
     return scene.cameras[scene.selected_camera]
 
-def update_scene(scene: Scene, keys: list[bool], dt: float, mouse_vel: Vector2) -> None:
+def update_scene(scene: Scene, ctx: mgl.Context, keys: list[bool], dt: float, mouse_vel: Vector2) -> None:
     camera_movement(dt=dt, camera=get_active_camera(scene), keys=keys, mouse_vel=mouse_vel)
     calc_camera_matrix(camera=get_active_camera(scene))
+    # Create a empty buffer
+    build_empty_buffer(ctx=ctx, mesh=scene.objects['vertices'], size=12*8, update_vertices=False)
+    update_mesh_buffer(camera=get_active_camera(scene), mesh=scene.objects['vertices'], vertex_length=3)
+
+    # Code to read a buffer
+    vbo = list(np.frombuffer(scene.objects['vertices'].vbo.read(), dtype='f'))
+    vbo_string = ''.join(
+        [f'tri{i*2}:{vbo[i]} {vbo[i + 1]} {vbo[i + 2]},tri{i*2+1}:{vbo[i+3]} {vbo[i+4]} {vbo[i+5]}\n' 
+        for i in range(int(len(vbo) / 6))])
+    print(f'vbo:{vbo_string}')
 
 def render_scene(scene: Scene, surface: pg.Surface, ctx: mgl.Context) -> None:
-    ctx.clear()
+    ctx.clear(1, 1, 1)
     fill_display(surface=surface, colour=Colour(0, 0, 0))
-    
-    render_point_cloud(
-        display_surface=scene.display.surface,
-        camera=get_active_camera(scene),
-        point_cloud=scene.objects['cube_vertices']
-    )
 
-    render_mesh(mesh=scene.objects['quad'], mode=mgl.TRIANGLES)
+    render_mesh(mesh=scene.objects['vertices'], mode=mgl.TRIANGLES)
 
 

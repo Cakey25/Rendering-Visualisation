@@ -4,6 +4,7 @@ from points import PointCloud, Point
 from colours import colour_to_tuple
 from vectors import Vector2, vec2_to_tuple_float, Vector3, Vector4, vec4_to_vec2
 from matrices import matrix4_dot_vector4
+from mesh import Mesh, append_vertex_buffer
 
 import pygame as pg
 
@@ -41,3 +42,33 @@ def vertex_transformation(camera: Camera, position: Vector3) -> Vector2 | None:
         return vec4_to_vec2(vector=vector)
     else:
         return None
+
+# This is specifically rendering circles at points so need to find a way to organise these functions
+def update_mesh_buffer(camera: Camera, mesh: Mesh, vertex_length: int) -> None:
+    for i in range(int(len(mesh.vertices) / vertex_length)):
+        x = mesh.vertices[i * vertex_length + 0]
+        y = mesh.vertices[i * vertex_length + 1]
+        z = mesh.vertices[i * vertex_length + 2]
+
+        transformed_vertex = vertex_transformation(
+            camera=camera,
+            position=Vector3(x, y, z)
+        )
+        if transformed_vertex is None:
+            return
+        centerx = transformed_vertex.x
+        centery = transformed_vertex.y
+        quad_vertices = generate_quad_mesh(center=transformed_vertex, width=0.1, height=0.1)
+        append_vertex_buffer(mesh=mesh, vertices=quad_vertices, update_vertices=False)
+
+def generate_quad_mesh(center: Vector2, width: float, height: float) -> list[float]:
+    w = width / 2
+    h = height / 2
+    return [
+        center.x - w, center.y - h,
+        center.x + w, center.y - h,
+        center.x - w, center.y + h,
+        center.x - w, center.y + h,
+        center.x + w, center.y - h,
+        center.x + w, center.y + h
+    ]
