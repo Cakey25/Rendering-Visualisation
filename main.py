@@ -4,7 +4,7 @@ from window import Display, create_display, close_display, fill_display
 from events import get_all_events, get_event
 from vectors import Vector3, Vector2, vec2_to_tuple_int
 from colours import Colour
-from scene import Scene, render_scene, update_scene, get_active_camera
+from scene import Scene, render_scene, update_scene, get_active_camera, generate_scene
 from points import generate_cube
 from config import DISPLAY_SIZE, FPS
 from shader_program import get_program
@@ -25,35 +25,9 @@ def main() -> None:
     ctx = mgl.create_context()
     ctx.gc_mode = 'auto'
 
-    shader_program = get_program(ctx=ctx, name='quad')
-    quad = Mesh(
-        program=shader_program,
-        layout=('2f', 'vert')
-    )
-
-    # Create a empty buffer
-    build_empty_buffer(ctx=ctx, mesh=quad, size=12)
-    # Set buffer to 1 triangle
-    update_vertex_buffer(
-        mesh=quad, 
-        vertices=[
-            -0.5, -0.5,
-            0.5, -0.5,
-            -0.5, 0.5,
-    ])
-    # Append another triangle to buffer
-    append_vertex_buffer(
-        mesh=quad,
-        vertices=[
-            -0.5, 0.5,
-            0.5, -0.5,
-            0.5, 0.5
-    ])
-        
     # Creating scene - which will be done from json at some point
     scene = Scene(
         display=display,
-        objects=[generate_cube(colour=Colour(255, 255, 255), radius=0.05)],
         cameras=[Camera(
             position=Vector3(0.5, 0.5, -1),
             pitch=0,
@@ -61,6 +35,7 @@ def main() -> None:
             roll=0)],
         selected_camera=0,
     )
+    generate_scene(scene=scene, ctx=ctx)
 
     # Setup mouse
     pg.event.set_grab(True)
@@ -69,27 +44,18 @@ def main() -> None:
     
     dt: float = 0
     while display.active:
-        ctx.clear()
-
         # Make a inputs data class to contain these so i can pass it around
         event_flags: dict[int: bool] = get_all_events()
         keys: list[bool] = pg.key.get_pressed()
-
         mouse_vel = Vector2(*pg.mouse.get_rel())
 
         if get_event(event=pg.QUIT, event_flags=event_flags) or get_event(event=pg.K_ESCAPE, event_flags=event_flags):
             display.active = False
 
-        fill_display(surface=display.surface, colour=BACKGROUND_COL)
-
         update_scene(dt=dt, scene=scene, keys=keys, mouse_vel=mouse_vel)
-
-        render_scene(scene)
+        render_scene(scene=scene, surface=display.surface, ctx=ctx)
 
         dt: float = display.clock.tick(FPS) / 1_000
-
-        render_mesh(mesh=quad, mode=mgl.TRIANGLES)
-
         pg.display.flip()
 
     close_display()
