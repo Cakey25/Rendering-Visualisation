@@ -15,6 +15,7 @@ class Camera:
     roll: float
 
     focal: float = 1 # this is number of pixels a cube of length, x thakes up when x away
+    aspect_ratio: float = 16 / 9
     # when it is the same as horizontal or vertical heigth the FOV is 60 degrees in that direction
     camera_matrix: Matrix4 = Matrix4
 
@@ -41,7 +42,7 @@ def camera_movement(dt: float, camera: Camera, keys: list[bool], mouse_vel: Vect
 
     # Controlling camera rotation with mouse
     camera.yaw += mouse_vel.x * dt * MOUSE_SENSITIVITY
-    camera.pitch -= mouse_vel.y * dt * MOUSE_SENSITIVITY
+    camera.pitch += mouse_vel.y * dt * MOUSE_SENSITIVITY
 
 def calc_camera_matrix(camera: Camera) -> None:
     # Camera position
@@ -88,10 +89,10 @@ def calc_camera_matrix(camera: Camera) -> None:
     # Camera Projection
     camera.camera_matrix = matrix4_mult(
         Matrix4(elements=[
-            camera.focal,            0, 0, 0,
-            0,            camera.focal, 0, 0,
-            0,                       0, 0, 0,
-            0,                       0, 1, 0]
+            camera.focal / camera.aspect_ratio, 0, 0, 0,
+            0,                    camera.focal, 0, 0,
+            0,                               0, 0, 0,
+            0,                               0, 1, 0]
         ),
         camera.camera_matrix
     )

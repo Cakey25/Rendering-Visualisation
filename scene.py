@@ -52,11 +52,13 @@ def update_scene(scene: Scene, ctx: mgl.Context, keys: list[bool], dt: float, mo
     update_mesh_buffer(camera=get_active_camera(scene), mesh=scene.objects['vertices'], vertex_length=3)
 
     # Code to read a buffer
+    '''
     vbo = list(np.frombuffer(scene.objects['vertices'].vbo.read(), dtype='f'))
     vbo_string = ''.join(
         [f'tri{i*2}:{vbo[i]} {vbo[i + 1]} {vbo[i + 2]},tri{i*2+1}:{vbo[i+3]} {vbo[i+4]} {vbo[i+5]}\n' 
         for i in range(int(len(vbo) / 6))])
     print(f'vbo:{vbo_string}')
+    '''
 
 def render_scene(scene: Scene, surface: pg.Surface, ctx: mgl.Context) -> None:
     ctx.clear(1, 1, 1)
